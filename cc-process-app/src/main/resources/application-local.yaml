@@ -1,0 +1,50 @@
+# Camunda Configurations
+spring:
+   datasource:
+     platform: mysql
+     driverClassName: com.mysql.jdbc.Driver
+     url: jdbc:mysql://127.0.0.1:3306/CCAPPDBINST
+     username: root
+     password: root
+   jpa:
+     database: default
+     properties.hibernate.format_sql: true
+     hibernate.ddl-auto: update
+     generate-ddl: true
+     show-sql: true    
+spring.main.allow-bean-definition-overriding: true
+
+# spring.datasource:
+#   url: jdbc:h2:./camunda-db;DB_CLOSE_DELAY=-1;MVCC=TRUE;DB_CLOSE_ON_EXIT=FALSE
+#   username: sa
+#   password: sa
+# spring.h2.console.enabled: true
+
+spring.jersey.application-path: cc-api
+spring.application.name: creditcard-app
+
+
+camunda.bpm:
+  history-level: full
+  default-serialization-format: application/json
+  auto-deployment-enabled: true
+  admin-user:
+    id: admin
+    password: Camunda@2020
+    firstName: EAS
+    lastName: IPM
+  filter:
+    create: All Tasks
+server.port: 9090
+
+# App Configurations
+st.cc:
+   timeout.duration: "PT30M"
+   address.validation.url: https://www.yaddress.net/api/Address   
+   creditscore.validation.url: http://localhost:9091/credit-score
+   
+#camunda.cc.app.api.context.path: cc-api
+#camunda.cc.app.url: http://localhost:9090
+ 
+
+      

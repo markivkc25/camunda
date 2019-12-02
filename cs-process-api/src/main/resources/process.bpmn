@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
+  <bpmn:collaboration id="Collaboration_0020g6f">
+    <bpmn:participant id="Participant_03scawa" name="Credit Score Process Flow" processRef="creditscore-process-api" />
+  </bpmn:collaboration>
+  <bpmn:process id="creditscore-process-api" name="creditscore-process-api" isExecutable="true" camunda:versionTag="2.0">
+    <bpmn:startEvent id="StartEvent" name="Process&#10;started">
+      <bpmn:outgoing>SequenceFlow1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent" name="Process&#10;ended">
+      <bpmn:incoming>SequenceFlow_1wnfyav</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:parallelGateway id="ExclusiveGateway_023a6by">
+      <bpmn:incoming>SequenceFlow_0ynj4p9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qku7ik</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1f3i6rv</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="ExclusiveGateway_119en1c">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">var system = java.lang.System;
+system.out.println('Transunion Score'+execution.getVariable('transUnionScore'));
+</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_18o7zqy</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_05n155k</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1wnfyav</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="Task_019emvv" name="Enter the Applicant Details">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="FirstName" label="FirstName" type="string" />
+          <camunda:formField id="LastName" label="LastName" type="string" />
+          <camunda:formField id="DOB" label="DOB" type="string" />
+          <camunda:formField id="SSN" label="SSN" type="string" />
+          <camunda:formField id="Address" label="Address" type="string" />
+        </camunda:formData>
+        <camunda:taskListener event="create">
+          <camunda:script scriptFormat="groovy">println "User task '$task.name' was $task.eventName"</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ynj4p9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="ServiceTask_Equifax" name="Call Equifax" scriptFormat="javascript" camunda:resultVariable="equifaxScore" camunda:resource="classpath://js/getEquifaxScore.js">
+      <bpmn:incoming>SequenceFlow_1qku7ik</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_18o7zqy</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="ServiceTask_TransUnion" name="Call TransUnion" scriptFormat="groovy" camunda:resource="classpath://groovy/getTransunionScore.groovy">
+      <bpmn:incoming>SequenceFlow_1f3i6rv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_05n155k</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_05n155k" sourceRef="ServiceTask_TransUnion" targetRef="ExclusiveGateway_119en1c" />
+    <bpmn:sequenceFlow id="SequenceFlow_1wnfyav" sourceRef="ExclusiveGateway_119en1c" targetRef="EndEvent" />
+    <bpmn:sequenceFlow id="SequenceFlow_1f3i6rv" sourceRef="ExclusiveGateway_023a6by" targetRef="ServiceTask_TransUnion" />
+    <bpmn:sequenceFlow id="SequenceFlow_1qku7ik" sourceRef="ExclusiveGateway_023a6by" targetRef="ServiceTask_Equifax" />
+    <bpmn:sequenceFlow id="SequenceFlow_0ynj4p9" sourceRef="Task_019emvv" targetRef="ExclusiveGateway_023a6by" />
+    <bpmn:sequenceFlow id="SequenceFlow_18o7zqy" sourceRef="ServiceTask_Equifax" targetRef="ExclusiveGateway_119en1c" />
+    <bpmn:sequenceFlow id="SequenceFlow1" sourceRef="StartEvent" targetRef="Task_019emvv" />
+    <bpmn:textAnnotation id="TextAnnotation_1as3xeg">
+      <bpmn:text>Java Script Integration</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1pr0461">
+      <bpmn:text>External Groovy Scipt Integration</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0ytjjfg">
+      <bpmn:text>Inline Groovy Scipt</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1gw0uy1">
+      <bpmn:text>Inline Javascript</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1nidm0n" sourceRef="ExclusiveGateway_119en1c" targetRef="TextAnnotation_1gw0uy1" />
+    <bpmn:association id="Association_0xib4v6" sourceRef="Task_019emvv" targetRef="TextAnnotation_0ytjjfg" />
+    <bpmn:association id="Association_0dvjppe" sourceRef="ServiceTask_Equifax" targetRef="TextAnnotation_1as3xeg" />
+    <bpmn:association id="Association_0axaztp" sourceRef="ServiceTask_TransUnion" targetRef="TextAnnotation_1pr0461" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0020g6f">
+      <bpmndi:BPMNShape id="Participant_03scawa_di" bpmnElement="Participant_03scawa" isHorizontal="true">
+        <dc:Bounds x="121" y="57" width="860" height="390" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent">
+        <dc:Bounds x="173" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="171" y="278" width="41" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0fkea3f_di" bpmnElement="EndEvent">
+        <dc:Bounds x="922" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="920" y="278" width="41" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_0g9dc88_di" bpmnElement="ExclusiveGateway_023a6by">
+        <dc:Bounds x="405" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_1vjwjf8_di" bpmnElement="ExclusiveGateway_119en1c">
+        <dc:Bounds x="691" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0wrr8lp_di" bpmnElement="Task_019emvv">
+        <dc:Bounds x="250" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0eku29u_di" bpmnElement="ServiceTask_Equifax">
+        <dc:Bounds x="520" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_123erti_di" bpmnElement="ServiceTask_TransUnion">
+        <dc:Bounds x="520" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1as3xeg_di" bpmnElement="TextAnnotation_1as3xeg">
+        <dc:Bounds x="620" y="80" width="100" height="39" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1pr0461_di" bpmnElement="TextAnnotation_1pr0461">
+        <dc:Bounds x="650" y="370" width="100" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0ytjjfg_di" bpmnElement="TextAnnotation_0ytjjfg">
+        <dc:Bounds x="350" y="140" width="100" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1gw0uy1_di" bpmnElement="TextAnnotation_1gw0uy1">
+        <dc:Bounds x="750" y="150" width="100" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_05n155k_di" bpmnElement="SequenceFlow_05n155k">
+        <di:waypoint x="620" y="340" />
+        <di:waypoint x="716" y="340" />
+        <di:waypoint x="716" y="285" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wnfyav_di" bpmnElement="SequenceFlow_1wnfyav">
+        <di:waypoint x="741" y="260" />
+        <di:waypoint x="922" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1f3i6rv_di" bpmnElement="SequenceFlow_1f3i6rv">
+        <di:waypoint x="430" y="285" />
+        <di:waypoint x="430" y="340" />
+        <di:waypoint x="520" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qku7ik_di" bpmnElement="SequenceFlow_1qku7ik">
+        <di:waypoint x="430" y="235" />
+        <di:waypoint x="430" y="200" />
+        <di:waypoint x="520" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ynj4p9_di" bpmnElement="SequenceFlow_0ynj4p9">
+        <di:waypoint x="350" y="260" />
+        <di:waypoint x="405" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_18o7zqy_di" bpmnElement="SequenceFlow_18o7zqy">
+        <di:waypoint x="620" y="200" />
+        <di:waypoint x="716" y="200" />
+        <di:waypoint x="716" y="235" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="496.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_08va5r8_di" bpmnElement="SequenceFlow1">
+        <di:waypoint x="209" y="260" />
+        <di:waypoint x="250" y="260" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="228" y="95" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1nidm0n_di" bpmnElement="Association_1nidm0n">
+        <di:waypoint x="728" y="247" />
+        <di:waypoint x="781" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0xib4v6_di" bpmnElement="Association_0xib4v6">
+        <di:waypoint x="340" y="220" />
+        <di:waypoint x="380" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0dvjppe_di" bpmnElement="Association_0dvjppe">
+        <di:waypoint x="610" y="160" />
+        <di:waypoint x="651" y="119" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0axaztp_di" bpmnElement="Association_0axaztp">
+        <di:waypoint x="620" y="362" />
+        <di:waypoint x="650" y="376" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

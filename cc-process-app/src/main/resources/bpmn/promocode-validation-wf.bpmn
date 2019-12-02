@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1aim44y" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+  <bpmn:collaboration id="Collaboration_0sguttj">
+    <bpmn:participant id="Participant_06ks36t" name="promocode-validation-workflow" processRef="promocode-validation-workflow" />
+  </bpmn:collaboration>
+  <bpmn:process id="promocode-validation-workflow" name="promocode-validation-workflow" isExecutable="true" camunda:versionTag="2.0">
+    <bpmn:serviceTask id="ServiceTask_1n4bsd0" name="Query Promotions Data Store" camunda:asyncBefore="true" camunda:delegateExpression="#{promocodeValidator}">
+      <bpmn:incoming>PromoCodeEntered_Flow</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ohmxmx</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0pumr9m">
+        <bpmn:targetRef>DataStoreReference_120nwst</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:serviceTask>
+    <bpmn:dataStoreReference id="DataStoreReference_120nwst" name="Promotions Table" />
+    <bpmn:boundaryEvent id="BoundaryEvent_0yor9wd" camunda:asyncBefore="true" attachedToRef="ServiceTask_1n4bsd0">
+      <bpmn:outgoing>SequenceFlow_01xnxu6</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1rh3bsp" errorRef="Error_1omrlt7" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1wgx6s1" sourceRef="StartEvent_126ljt2" targetRef="ExclusiveGateway_061a0v1" />
+    <bpmn:sequenceFlow id="PromoCodeEntered_Flow" name="Yes" sourceRef="ExclusiveGateway_061a0v1" targetRef="ServiceTask_1n4bsd0">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${applicationForm.reference.promoCode != null && !empty applicationForm.reference.promoCode}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_061a0v1" name="Is Promo Code Entered" camunda:asyncBefore="true" default="SequenceFlow_15utdhy">
+      <bpmn:incoming>SequenceFlow_1wgx6s1</bpmn:incoming>
+      <bpmn:outgoing>PromoCodeEntered_Flow</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_15utdhy</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:startEvent id="StartEvent_126ljt2">
+      <bpmn:outgoing>SequenceFlow_1wgx6s1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0ohmxmx" sourceRef="ServiceTask_1n4bsd0" targetRef="EndEvent_0zbrgf9" />
+    <bpmn:sequenceFlow id="SequenceFlow_15utdhy" sourceRef="ExclusiveGateway_061a0v1" targetRef="EndEvent_0zbrgf9" />
+    <bpmn:endEvent id="EndEvent_0zbrgf9">
+      <bpmn:incoming>SequenceFlow_15utdhy</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0ohmxmx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_01xnxu6" sourceRef="BoundaryEvent_0yor9wd" targetRef="EndEvent_05tsiva" />
+    <bpmn:endEvent id="EndEvent_05tsiva" name="Throw error to parent process" camunda:asyncBefore="true">
+      <bpmn:incoming>SequenceFlow_01xnxu6</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_1omrlt7" />
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:error id="Error_1omrlt7" name="InvalidPromoCode" errorCode="CC-WF-001" camunda:errorMessage="InvalidPromoCode" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0sguttj">
+      <bpmndi:BPMNShape id="Participant_06ks36t_di" bpmnElement="Participant_06ks36t" isHorizontal="true">
+        <dc:Bounds x="150" y="70" width="632" height="248" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_126ljt2_di" bpmnElement="StartEvent_126ljt2">
+        <dc:Bounds x="212" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_061a0v1_di" bpmnElement="ExclusiveGateway_061a0v1" isMarkerVisible="true">
+        <dc:Bounds x="325" y="155" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="385" y="166" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1n4bsd0_di" bpmnElement="ServiceTask_1n4bsd0">
+        <dc:Bounds x="420" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_120nwst_di" bpmnElement="DataStoreReference_120nwst">
+        <dc:Bounds x="566" y="155" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="549" y="212" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0yor9wd_di" bpmnElement="BoundaryEvent_0yor9wd">
+        <dc:Bounds x="502" y="262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wgx6s1_di" bpmnElement="SequenceFlow_1wgx6s1">
+        <di:waypoint xsi:type="dc:Point" x="248" y="180" />
+        <di:waypoint xsi:type="dc:Point" x="325" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ej7ajc_di" bpmnElement="PromoCodeEntered_Flow">
+        <di:waypoint xsi:type="dc:Point" x="350" y="205" />
+        <di:waypoint xsi:type="dc:Point" x="350" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="420" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="350" y="220" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0pumr9m_di" bpmnElement="DataOutputAssociation_0pumr9m">
+        <di:waypoint xsi:type="dc:Point" x="520" y="216" />
+        <di:waypoint xsi:type="dc:Point" x="566" y="194" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ohmxmx_di" bpmnElement="SequenceFlow_0ohmxmx">
+        <di:waypoint xsi:type="dc:Point" x="520" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="706" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="706" y="198" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="613" y="225" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_15utdhy_di" bpmnElement="SequenceFlow_15utdhy">
+        <di:waypoint xsi:type="dc:Point" x="350" y="155" />
+        <di:waypoint xsi:type="dc:Point" x="350" y="112" />
+        <di:waypoint xsi:type="dc:Point" x="706" y="112" />
+        <di:waypoint xsi:type="dc:Point" x="706" y="162" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="528" y="97" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0zbrgf9_di" bpmnElement="EndEvent_0zbrgf9">
+        <dc:Bounds x="688" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="706" y="198" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01xnxu6_di" bpmnElement="SequenceFlow_01xnxu6">
+        <di:waypoint xsi:type="dc:Point" x="538" y="280" />
+        <di:waypoint xsi:type="dc:Point" x="581" y="280" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="560" y="265" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_12yv7p9_di" bpmnElement="EndEvent_05tsiva">
+        <dc:Bounds x="581" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="562" y="298" width="73" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

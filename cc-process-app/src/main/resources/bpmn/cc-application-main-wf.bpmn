@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_03a4963" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
+  <bpmn:collaboration id="Collaboration_1787dhg">
+    <bpmn:participant id="Participant_0c6eci7" name="credit-card-application-flow" processRef="credit-card-application-flow" />
+  </bpmn:collaboration>
+  <bpmn:process id="credit-card-application-flow" name="credit-card-application-flow" isExecutable="true" camunda:versionTag="1.0">
+    <bpmn:startEvent id="StartEvent_1" name="Apply Credit Card" camunda:asyncBefore="true">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="#{variablesInitializerExecutionListener}" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_0ibvpxn</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Task_1ilwu71" name="Enter or Review Personal Details" camunda:asyncBefore="true" camunda:assignee="demo">
+      <bpmn:extensionElements>
+        <camunda:taskListener delegateExpression="#{personalDetailsUserTask}" event="complete" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_00kdqs3</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0riu32h</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1gxa3pv</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_15iatqj">
+      <bpmn:incoming>SequenceFlow_176q5x4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:callActivity id="Task_1aopkb8" name="Validate Personal Details" camunda:asyncBefore="true" calledElement="personaldetails-validation-workflow">
+      <bpmn:extensionElements>
+        <camunda:in variables="all" />
+        <camunda:out variables="all" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1gxa3pv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_11mlqbq</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_0pc6a4b" camunda:asyncBefore="true" attachedToRef="Task_1aopkb8">
+      <bpmn:outgoing>SequenceFlow_00kdqs3</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_1p7nz5f" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_131iqf7" camunda:asyncBefore="true" cancelActivity="false" attachedToRef="Task_1ilwu71">
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${duration}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_105t6f3" sourceRef="Task_0em21jl" targetRef="EndEvent_0npvfjm" />
+    <bpmn:sequenceFlow id="SequenceFlow_0xvjim0" sourceRef="Task_0pu88ju" targetRef="Task_0em21jl" />
+    <bpmn:sequenceFlow id="SequenceFlow_1dpxl43" sourceRef="Task_0de0mqm" targetRef="Task_0gma68n" />
+    <bpmn:sequenceFlow id="SequenceFlow_176q5x4" sourceRef="IntermediateThrowEvent_01ik4id" targetRef="EndEvent_15iatqj" />
+    <bpmn:sequenceFlow id="SequenceFlow_00kdqs3" name="Invalid Personal Details" sourceRef="IntermediateThrowEvent_0pc6a4b" targetRef="Task_1ilwu71" />
+    <bpmn:sequenceFlow id="SequenceFlow_06n2moy" name="Send Invalid Customer Details Exception" sourceRef="IntermediateThrowEvent_0kw7qyo" targetRef="Task_Enter_Promocode_UserDetails" />
+    <bpmn:sequenceFlow id="SequenceFlow_11mlqbq" sourceRef="Task_1aopkb8" targetRef="ExclusiveGateway_1ec266z" />
+    <bpmn:sequenceFlow id="SequenceFlow_1gxa3pv" sourceRef="Task_1ilwu71" targetRef="Task_1aopkb8" />
+    <bpmn:sequenceFlow id="SequenceFlow_0ibvpxn" sourceRef="StartEvent_1" targetRef="Task_Enter_Promocode_UserDetails" />
+    <bpmn:userTask id="Task_Enter_Promocode_UserDetails" name="Enter Promo Code and Customer Details" camunda:asyncBefore="true" camunda:assignee="demo">
+      <bpmn:extensionElements>
+        <camunda:formData />
+        <camunda:taskListener delegateExpression="#{userTaskVariableInitializer}" event="complete" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0ibvpxn</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0yey3xr</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_06n2moy</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1bt2n53</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_01ik4id" camunda:asyncBefore="true" attachedToRef="Task_Enter_Promocode_UserDetails">
+      <bpmn:outgoing>SequenceFlow_176q5x4</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${duration}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1bt2n53" sourceRef="Task_Enter_Promocode_UserDetails" targetRef="Task_CallPromoCode" />
+    <bpmn:callActivity id="Task_1rnzstq" name="Validate Existing Customer Info" camunda:asyncBefore="true" calledElement="customer-credentials-workflow">
+      <bpmn:extensionElements>
+        <camunda:in variables="all" />
+        <camunda:out variables="all" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1o02ckl</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1e2g3j9</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_0kw7qyo" name="Validation Error" attachedToRef="Task_1rnzstq">
+      <bpmn:outgoing>SequenceFlow_06n2moy</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_0jnqt33" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1o02ckl" sourceRef="Task_CallPromoCode" targetRef="Task_1rnzstq" />
+    <bpmn:sequenceFlow id="SequenceFlow_1e2g3j9" sourceRef="Task_1rnzstq" targetRef="IntermediateThrowEvent_0viufie" />
+    <bpmn:callActivity id="Task_CallPromoCode" name="Validate PromoCode" camunda:asyncBefore="true" calledElement="promocode-validation-workflow">
+      <bpmn:extensionElements>
+        <camunda:properties />
+        <camunda:in variables="all" />
+        <camunda:out variables="all" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1bt2n53</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1o02ckl</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_1o2f7gh" camunda:asyncBefore="true" attachedToRef="Task_CallPromoCode">
+      <bpmn:outgoing>SequenceFlow_0yey3xr</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_1ol1jrv" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0yey3xr" name="Send Invalid Promo Code Exception" sourceRef="IntermediateThrowEvent_1o2f7gh" targetRef="Task_Enter_Promocode_UserDetails" />
+    <bpmn:endEvent id="EndEvent_0npvfjm" name="End of the Application Form">
+      <bpmn:incoming>SequenceFlow_105t6f3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Task_0em21jl" name="Respond the CC Appplication Decision" camunda:asyncBefore="true" camunda:delegateExpression="#{applicationDecisionTask}">
+      <bpmn:incoming>SequenceFlow_0xvjim0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_105t6f3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="Task_0pu88ju" name="Credit Card Approval Decison" camunda:asyncBefore="true" calledElement="creditcard-approval-decision-workflow">
+      <bpmn:extensionElements>
+        <camunda:in variables="all" />
+        <camunda:out variables="all" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0huxo1l</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xvjim0</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0huxo1l" sourceRef="Task_0gma68n" targetRef="Task_0pu88ju" />
+    <bpmn:serviceTask id="Task_0gma68n" name="Eligibility and Fraud Check" camunda:asyncBefore="true" camunda:delegateExpression="#{eligibilityandfraudValidator}">
+      <bpmn:incoming>SequenceFlow_1dpxl43</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0huxo1l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_02hxec6" sourceRef="ExclusiveGateway_1ec266z" targetRef="Task_0de0mqm" />
+    <bpmn:sequenceFlow id="SequenceFlow_0sfvq34" sourceRef="BoundaryEvent_0hi7z2z" targetRef="ExclusiveGateway_1ec266z" />
+    <bpmn:userTask id="Task_0de0mqm" name="Enter the User Preferences and validate" camunda:asyncBefore="true" camunda:assignee="demo">
+      <bpmn:extensionElements>
+        <camunda:taskListener delegateExpression="#{userPreferenceValidator}" event="complete" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_02hxec6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1dpxl43</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_1q1jjdx" camunda:asyncBefore="true" cancelActivity="false" attachedToRef="Task_0de0mqm">
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${duration}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="BoundaryEvent_0hi7z2z" attachedToRef="Task_0de0mqm">
+      <bpmn:outgoing>SequenceFlow_0sfvq34</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_02m3jvp" />
+    </bpmn:boundaryEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1ec266z">
+      <bpmn:incoming>SequenceFlow_11mlqbq</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0sfvq34</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_02hxec6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0riu32h" sourceRef="IntermediateThrowEvent_0viufie" targetRef="Task_1ilwu71" />
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0viufie" name="PromoCodeValidationSuccesful">
+      <bpmn:incoming>SequenceFlow_1e2g3j9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0riu32h</bpmn:outgoing>
+      <bpmn:signalEventDefinition signalRef="Signal_02rahpk" />
+    </bpmn:intermediateThrowEvent>
+  </bpmn:process>
+  <bpmn:error id="Error_1ol1jrv" name="InvalidPromoCode" errorCode="CC-WF-001" camunda:errorMessage="Invalid Promo Code Provided" />
+  <bpmn:error id="Error_0jnqt33" name="InvalidCustomer" errorCode="CC-WF-002" />
+  <bpmn:error id="Error_1p7nz5f" name="InvalidPersonalInfo" errorCode="CC-WF-003" />
+  <bpmn:error id="Error_02m3jvp" name="InvalidUserPreferences" errorCode="CC-WF-004" />
+  <bpmn:signal id="Signal_02rahpk" name="PromoCodeValidationSuccesful" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1787dhg">
+      <bpmndi:BPMNShape id="Participant_0c6eci7_di" bpmnElement="Participant_0c6eci7" isHorizontal="true">
+        <dc:Bounds x="159" y="80" width="1791" height="338" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="209" y="220" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="196" y="203" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_095p4cd_di" bpmnElement="Task_Enter_Promocode_UserDetails">
+        <dc:Bounds x="290" y="198" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1n5scvj_di" bpmnElement="Task_1ilwu71">
+        <dc:Bounds x="800" y="198" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_15iatqj_di" bpmnElement="EndEvent_15iatqj">
+        <dc:Bounds x="209" y="361" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="155" y="275" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0dus0m2_di" bpmnElement="Task_0de0mqm">
+        <dc:Bounds x="1242" y="198" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0npvfjm_di" bpmnElement="EndEvent_0npvfjm">
+        <dc:Bounds x="1848" y="220" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1824" y="263" width="83" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1s9ue8o_di" bpmnElement="Task_0em21jl">
+        <dc:Bounds x="1701" y="198" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_09l8izq_di" bpmnElement="IntermediateThrowEvent_0kw7qyo">
+        <dc:Bounds x="702" y="260" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="741" y="268" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_192xrag_di" bpmnElement="IntermediateThrowEvent_1o2f7gh">
+        <dc:Bounds x="525" y="180" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="543" y="216" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_1dmpoqd_di" bpmnElement="IntermediateThrowEvent_131iqf7">
+        <dc:Bounds x="882" y="180" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0phma9p_di" bpmnElement="IntermediateThrowEvent_01ik4id">
+        <dc:Bounds x="272" y="260" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0a215aj_di" bpmnElement="IntermediateThrowEvent_0pc6a4b">
+        <dc:Bounds x="1052" y="260" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ibvpxn_di" bpmnElement="SequenceFlow_0ibvpxn">
+        <di:waypoint x="245" y="238" />
+        <di:waypoint x="290" y="238" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gxa3pv_di" bpmnElement="SequenceFlow_1gxa3pv">
+        <di:waypoint x="900" y="238" />
+        <di:waypoint x="970" y="238" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_11mlqbq_di" bpmnElement="SequenceFlow_11mlqbq">
+        <di:waypoint x="1070" y="238" />
+        <di:waypoint x="1124" y="238" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1097" y="223" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06n2moy_di" bpmnElement="SequenceFlow_06n2moy">
+        <di:waypoint x="720" y="296" />
+        <di:waypoint x="720" y="360" />
+        <di:waypoint x="360" y="360" />
+        <di:waypoint x="360" y="278" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="394" y="362" width="85" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00kdqs3_di" bpmnElement="SequenceFlow_00kdqs3">
+        <di:waypoint x="1070" y="296" />
+        <di:waypoint x="1070" y="316" />
+        <di:waypoint x="850" y="316" />
+        <di:waypoint x="850" y="278" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="921" y="317" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_176q5x4_di" bpmnElement="SequenceFlow_176q5x4">
+        <di:waypoint x="290" y="296" />
+        <di:waypoint x="290" y="379" />
+        <di:waypoint x="245" y="379" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1dpxl43_di" bpmnElement="SequenceFlow_1dpxl43">
+        <di:waypoint x="1342" y="238" />
+        <di:waypoint x="1416" y="238" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1379" y="223" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xvjim0_di" bpmnElement="SequenceFlow_0xvjim0">
+        <di:waypoint x="1653" y="238" />
+        <di:waypoint x="1701" y="238" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1677" y="223" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_105t6f3_di" bpmnElement="SequenceFlow_105t6f3">
+        <di:waypoint x="1801" y="238" />
+        <di:waypoint x="1848" y="238" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1825" y="223" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1bpn7sf_di" bpmnElement="Task_1aopkb8">
+        <dc:Bounds x="970" y="198" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0l657i2_di" bpmnElement="Task_CallPromoCode">
+        <dc:Bounds x="443" y="198" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0ujiq5x_di" bpmnElement="IntermediateThrowEvent_1q1jjdx">
+        <dc:Bounds x="1324" y="180" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1342" y="216" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0gs7fgj_di" bpmnElement="Task_1rnzstq">
+        <dc:Bounds x="620" y="198" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0pi9k1b_di" bpmnElement="Task_0pu88ju">
+        <dc:Bounds x="1553" y="198" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bt2n53_di" bpmnElement="SequenceFlow_1bt2n53">
+        <di:waypoint x="390" y="238" />
+        <di:waypoint x="443" y="237" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="417" y="222.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1o02ckl_di" bpmnElement="SequenceFlow_1o02ckl">
+        <di:waypoint x="543" y="239" />
+        <di:waypoint x="620" y="239" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="582" y="224" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1e2g3j9_di" bpmnElement="SequenceFlow_1e2g3j9">
+        <di:waypoint x="720" y="238" />
+        <di:waypoint x="742" y="238" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0yey3xr_di" bpmnElement="SequenceFlow_0yey3xr">
+        <di:waypoint x="543" y="180" />
+        <di:waypoint x="543" y="167" />
+        <di:waypoint x="340" y="167" />
+        <di:waypoint x="340" y="198" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="409" y="152" width="65" height="37" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0huxo1l_di" bpmnElement="SequenceFlow_0huxo1l">
+        <di:waypoint x="1516" y="238" />
+        <di:waypoint x="1553" y="238" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1535" y="223" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0qnrc3g_di" bpmnElement="Task_0gma68n">
+        <dc:Bounds x="1416" y="198" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0kv5fqw_di" bpmnElement="BoundaryEvent_0hi7z2z">
+        <dc:Bounds x="1324" y="260" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1342" y="296" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1ec266z_di" bpmnElement="ExclusiveGateway_1ec266z" isMarkerVisible="true">
+        <dc:Bounds x="1124" y="213" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1149" y="263" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_02hxec6_di" bpmnElement="SequenceFlow_02hxec6">
+        <di:waypoint x="1174" y="238" />
+        <di:waypoint x="1242" y="238" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1208" y="223" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0sfvq34_di" bpmnElement="SequenceFlow_0sfvq34">
+        <di:waypoint x="1342" y="296" />
+        <di:waypoint x="1342" y="313" />
+        <di:waypoint x="1149" y="313" />
+        <di:waypoint x="1149" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1246" y="298" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0riu32h_di" bpmnElement="SequenceFlow_0riu32h">
+        <di:waypoint x="778" y="238" />
+        <di:waypoint x="800" y="238" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0b2cidp_di" bpmnElement="IntermediateThrowEvent_0viufie">
+        <dc:Bounds x="742" y="220" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="716" y="263" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1ah2tlt" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+  <bpmn:error id="Error_02zm1x0" name="InvalidSSN" errorCode="CC-WF-009" />
+  <bpmn:error id="Error_0ffw433" name="InvalidPersonalInfo" errorCode="CC-WF-003" />
+  <bpmn:collaboration id="Collaboration_0npg04i">
+    <bpmn:participant id="Participant_0o2bpe6" name="Personal Details Validation" processRef="personaldetails-validation-workflow" />
+  </bpmn:collaboration>
+  <bpmn:process id="personaldetails-validation-workflow" name="personaldetails-validation-workflow" isExecutable="true" camunda:versionTag="1.0">
+    <bpmn:startEvent id="StartEvent_1" camunda:asyncBefore="true">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript"><![CDATA[print('Start task of personal details validation was invoked')]]></camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1e5ct45</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0bkzsdm" sourceRef="IntermediateThrowEvent_0kr2rvd" targetRef="EndEvent_0oley5d" />
+    <bpmn:sequenceFlow id="SequenceFlow_0zypzme" sourceRef="BoundaryEvent_0e8opfp" targetRef="EndEvent_0oley5d" />
+    <bpmn:serviceTask id="Task_18znpjt" name="ValidateAddress" camunda:asyncBefore="true" camunda:delegateExpression="#{addressValidator}">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript"><![CDATA[print('Validate Address was invoked')]]></camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1e5ct45</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_05f5lop</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_0kr2rvd" camunda:asyncBefore="true" attachedToRef="Task_18znpjt">
+      <bpmn:outgoing>SequenceFlow_0bkzsdm</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_070kcli" />
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="Task_0v5ph6d" name="Get Credit Score By SSN" camunda:asyncBefore="true" camunda:delegateExpression="#{ssnValidator}">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript"><![CDATA[print('Get Credit score by SSN was invoked')]]></camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_05f5lop</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0tiiwc9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="BoundaryEvent_0e8opfp" camunda:asyncBefore="true" attachedToRef="Task_0v5ph6d">
+      <bpmn:outgoing>SequenceFlow_0zypzme</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_02zm1x0" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="EndEvent_0oley5d" name="Throw Error to Parent Process" camunda:asyncBefore="true">
+      <bpmn:incoming>SequenceFlow_0zypzme</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0bkzsdm</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_0ffw433" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1e5ct45" sourceRef="StartEvent_1" targetRef="Task_18znpjt" />
+    <bpmn:sequenceFlow id="SequenceFlow_05f5lop" sourceRef="Task_18znpjt" targetRef="Task_0v5ph6d" />
+    <bpmn:sequenceFlow id="SequenceFlow_0tiiwc9" sourceRef="Task_0v5ph6d" targetRef="EndEvent_0qd2wyv" />
+    <bpmn:endEvent id="EndEvent_0qd2wyv" camunda:asyncBefore="true">
+      <bpmn:incoming>SequenceFlow_0tiiwc9</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:error id="Error_070kcli" name="InvalidAddress" errorCode="CC-WF-008" />
+  <bpmn:error id="Error_1mbz3np" name="InvalidPersonalInfo" errorCode="CC-WF-003" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0npg04i">
+      <bpmndi:BPMNShape id="Participant_0o2bpe6_di" bpmnElement="Participant_0o2bpe6" isHorizontal="true">
+        <dc:Bounds x="273" y="33" width="588" height="320" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="343" y="124" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="407" y="89" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0qd2wyv_di" bpmnElement="EndEvent_0qd2wyv">
+        <dc:Bounds x="759" y="124" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="184" y="89" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_11yex7h_di" bpmnElement="Task_0v5ph6d">
+        <dc:Bounds x="602" y="102" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1qcx5yh_di" bpmnElement="EndEvent_0oley5d">
+        <dc:Bounds x="578" y="286" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="598" y="260" width="76" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1xa9byu_di" bpmnElement="Task_18znpjt">
+        <dc:Bounds x="438" y="102" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_1d82h7q_di" bpmnElement="IntermediateThrowEvent_0kr2rvd">
+        <dc:Bounds x="520" y="164" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="538" y="200" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0lww2pq_di" bpmnElement="BoundaryEvent_0e8opfp">
+        <dc:Bounds x="684" y="164" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="602" y="56" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bkzsdm_di" bpmnElement="SequenceFlow_0bkzsdm">
+        <di:waypoint xsi:type="dc:Point" x="538" y="200" />
+        <di:waypoint xsi:type="dc:Point" x="538" y="304" />
+        <di:waypoint xsi:type="dc:Point" x="578" y="304" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="553" y="252" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zypzme_di" bpmnElement="SequenceFlow_0zypzme">
+        <di:waypoint xsi:type="dc:Point" x="702" y="200" />
+        <di:waypoint xsi:type="dc:Point" x="702" y="304" />
+        <di:waypoint xsi:type="dc:Point" x="614" y="304" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="717" y="252" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1e5ct45_di" bpmnElement="SequenceFlow_1e5ct45">
+        <di:waypoint xsi:type="dc:Point" x="379" y="142" />
+        <di:waypoint xsi:type="dc:Point" x="438" y="142" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="409" y="117" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_05f5lop_di" bpmnElement="SequenceFlow_05f5lop">
+        <di:waypoint xsi:type="dc:Point" x="538" y="142" />
+        <di:waypoint xsi:type="dc:Point" x="602" y="142" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="570" y="117" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tiiwc9_di" bpmnElement="SequenceFlow_0tiiwc9">
+        <di:waypoint xsi:type="dc:Point" x="702" y="142" />
+        <di:waypoint xsi:type="dc:Point" x="759" y="142" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="731" y="127" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

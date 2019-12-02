@@ -1,0 +1,26 @@
+spring:
+   datasource:
+     platform: mysql
+     driverClassName: com.mysql.jdbc.Driver
+     url: ${CAMUNDA_PE_DATASOURCE_URL}
+     username: ${CAMUNDA_PE_DATASOURCE_USERNAME}
+     password: ${CAMUNDA_PE_DATASOURCE_PASSWORD}
+   jpa:
+     database: default
+     properties.hibernate.format_sql: true
+     hibernate.ddl-auto: update
+     generate-ddl: true
+     show-sql: true    
+spring.h2.console.enabled: true
+camunda.bpm:
+  history-level: full
+  default-serialization-format: application/json
+  auto-deployment-enabled: true
+  admin-user:
+    id: admin
+    password: Camunda@2020
+    firstName: EAS
+    lastName: IPM
+  filter:
+    create: All Tasks
+server.port: ${CS_PROCESS_APP_PORT}

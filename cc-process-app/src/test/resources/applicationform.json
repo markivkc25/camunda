@@ -1,0 +1,21 @@
+{
+	"applicationId": "8ba1b60c-08f2-11ea-8206-00ff1a9a7518",
+	"processingStatus": {
+		"id": null,
+		"message": null,
+		"nextStage": "ENTERPERSONALDETAILS",
+		"currentStage": "ENTERCUSTOMERDETAILS",
+		"stageResult": null
+	},
+	"applicationForm": {
+		"id": null,
+		"overAllStatus": null,
+		"applicant": null,
+		"reference": {
+			"id": null,
+			"promoCode": null,
+			"applicationIdentifier": "8ba1b60c-08f2-11ea-8206-00ff1a9a7518"
+		},
+		"isExistingCustomer": false
+	}
+}

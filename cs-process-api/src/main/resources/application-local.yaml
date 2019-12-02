@@ -1,0 +1,27 @@
+spring:
+   datasource:
+     platform: mysql
+     driverClassName: com.mysql.jdbc.Driver
+     url: jdbc:mysql://localhost:3306/CCAPPDBINST?createDatabaseIfNotExist=true
+     username: root
+     password: root
+   jpa:
+     database: default
+     properties.hibernate.format_sql: true
+     hibernate.ddl-auto: update
+     generate-ddl: true
+     show-sql: true    
+#shareable h2 database: jdbc:h2:./camunda-db;DB_CLOSE_DELAY=-1;MVCC=TRUE;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
+spring.h2.console.enabled: true
+camunda.bpm:
+  history-level: full
+  default-serialization-format: application/json
+  auto-deployment-enabled: true
+  admin-user:
+    id: admin
+    password: Camunda@2020
+    firstName: EAS
+    lastName: IPM
+  filter:
+    create: All Tasks
+server.port: 9091
