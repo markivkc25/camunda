@@ -3,6 +3,7 @@ package com.cognizant.eas.ipm.camunda.cc.app.tasks.service;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -34,6 +35,7 @@ public class AddressValidatorDelegate implements JavaDelegate {
 
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
+		StopWatch stopwatch = StopWatch.createStarted();	
 		LOGGER.info("Entered AddressValidatorDelegate.execute");
 		// Retrieve the Original Form Request Object 
 		execution.setVariable("url", "");

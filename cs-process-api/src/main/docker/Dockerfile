@@ -1,6 +1,6 @@
 FROM openjdk:8-jre-alpine
 RUN mkdir app
-COPY creditscore-process-api.jar app/cs-app.jar
+COPY cs-process-api.jar app/cs-app.jar
 WORKDIR app
 RUN "pwd"
 RUN "ls"

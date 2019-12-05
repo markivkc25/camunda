@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service("ssnValidator")
 public class SSNValidatorDelegate implements JavaDelegate{
 	
-private static final String ACTIVE = "ACTIVE";
+private static final String ACTIVE = "active";
 
 private static final String STATUS = "status";
 
@@ -47,10 +47,6 @@ private final Logger LOGGER = Logger.getLogger(PromoCodeValidationDelegate.class
 
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
-		// TODO Auto-generated method stub
-		//1. Call credit-score API
-		 //2. Get the Score
-		//3. Set execution.setVariable("creditScore", 650);
 		
 		LOGGER.info("Entered SSNValidatorDelegate.execute");
 		// Retrieve the Original Form Request Object 
@@ -59,10 +55,8 @@ private final Logger LOGGER = Logger.getLogger(PromoCodeValidationDelegate.class
 		ApplicationFormResponse applicationFormResponse = getResponseObject(execution);		
 		
 		validateSSN(applicationForm, applicationFormResponse, execution);
+		execution.setVariable("ValidationStatus", "Complete");
 		getCreditScore(execution, applicationForm);
-		execution.setVariable(APPLICATION_FORM_RESPONSE, applicationFormResponse);
-		
-		// Retrieve the Previous and Modify the response Response Object and Set in Context
 		execution.setVariable(APPLICATION_FORM_RESPONSE, applicationFormResponse);
 		
 	}

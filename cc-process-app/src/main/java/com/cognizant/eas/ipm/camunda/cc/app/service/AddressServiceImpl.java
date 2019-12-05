@@ -64,7 +64,7 @@ public class AddressServiceImpl implements AddressService {
 			address.setZipCode(jsonObject.get("Zip").getAsString());
 		}
 		
-		return true;
+		return isValidAddress;
 	}
 
 	/**

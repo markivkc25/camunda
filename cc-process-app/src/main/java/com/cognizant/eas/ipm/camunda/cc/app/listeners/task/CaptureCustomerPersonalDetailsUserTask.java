@@ -31,7 +31,8 @@ public class CaptureCustomerPersonalDetailsUserTask implements TaskListener {
 	@Override
 	public void notify(DelegateTask task) {
 		LOGGER.info("Personal Details TaskListener Invoked:");
-		LOGGER.info("Customer's Personal Details Recieved:");		
+		LOGGER.info("Customer's Personal Details Recieved:");
+		task.setVariable("ValidationStatus", "InComplete");
 		//Initialize the Response Object Form
 		ApplicationFormResponse applicationFormResponse = new ApplicationFormResponse();
 		//Initialize the Processing Status Form

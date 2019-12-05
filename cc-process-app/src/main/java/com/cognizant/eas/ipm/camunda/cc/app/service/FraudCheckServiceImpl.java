@@ -70,7 +70,6 @@ public class FraudCheckServiceImpl implements FraudCheckService{
 		creditScoreRequest.setLastName(form.getApplicant().getLastName());
 		creditScoreRequest.setSsn(form.getApplicant().getSsn());	
 		creditScoreRequest.setAddress(form.getApplicant().getAddress().toString());
-		//creditScoreRequest.setEmail(form.getApplicant().get);
 		
 		HttpHeaders headers = new HttpHeaders();
 	    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

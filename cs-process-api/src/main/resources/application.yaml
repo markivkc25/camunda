@@ -2,9 +2,12 @@ spring:
    datasource:
      platform: mysql
      driverClassName: com.mysql.jdbc.Driver
-     url: ${CAMUNDA_PE_DATASOURCE_URL}
-     username: ${CAMUNDA_PE_DATASOURCE_USERNAME}
-     password: ${CAMUNDA_PE_DATASOURCE_PASSWORD}
+     #url: ${CAMUNDA_PE_DATASOURCE_URL}
+     url: jdbc:mysql://localhost:3306/CCAPPDBINST
+     #username: ${CAMUNDA_PE_DATASOURCE_USERNAME}
+     username: root
+     #password: ${CAMUNDA_PE_DATASOURCE_PASSWORD}
+     password: root
    jpa:
      database: default
      properties.hibernate.format_sql: true
@@ -23,4 +26,4 @@ camunda.bpm:
     lastName: IPM
   filter:
     create: All Tasks
-server.port: ${CS_PROCESS_APP_PORT}
+server.port: 9090

@@ -3,6 +3,7 @@ package com.cognizant.eas.ipm.camunda.cc.app.tasks.service;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -36,6 +37,7 @@ public class AccountDetailsValidatorDelegate implements JavaDelegate {
 
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
+		StopWatch stopwatch = StopWatch.createStarted();	
 		LOGGER.info("Entered AccountDetailsValidatorDelegate.execute");
 		// Retrieve the Original Form Request Object 
 		ApplicationForm applicationForm = getRequestObject(execution);
@@ -44,7 +46,8 @@ public class AccountDetailsValidatorDelegate implements JavaDelegate {
 		validateAccountDetails(applicationForm, applicationFormResponse,execution);
 		// Retrieve the Previous and Modify the response Response Object and Set in Context
 		execution.setVariable(APPLICATION_FORM_RESPONSE, applicationFormResponse);
-
+		stopwatch.stop(); // optional
+		LOGGER.info("AccountDetailsValidatorDelegate:" + stopwatch);
 	}
 	
 	/**

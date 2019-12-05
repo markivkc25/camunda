@@ -3,6 +3,7 @@ package com.cognizant.eas.ipm.camunda.cc.app.tasks.service;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -38,14 +39,23 @@ public class PromoCodeValidationDelegate implements JavaDelegate {
 	
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
+		StopWatch stopwatch = StopWatch.createStarted();	
 		LOGGER.info("Entered PromoCodeValidationDelegate.execute");
 		// Retrieve the Original Form Request Object 
 		ApplicationForm applicationForm = getRequestObject(execution);
 		// Retrieve the Previous Response Object and Modify the response
 		ApplicationFormResponse applicationFormResponse = getResponseObject(execution);		
 		validatePromoCode(applicationForm, applicationFormResponse, execution);
+		
+		/*if(applicationForm.getApplicant().isIsExistingCustomer()!=null && applicationForm.getApplicant().isIsExistingCustomer()) {
+			execution.setVariable("ValidationStatus", "InComplete");
+		}else {
+			execution.setVariable("ValidationStatus", "Complete");
+		}*/
 		// Retrieve the Previous and Modify the response Response Object and Set in Context
 		execution.setVariable(APPLICATION_FORM_RESPONSE, applicationFormResponse);
+		stopwatch.stop(); // optional
+		LOGGER.info("PromoCodeValidationDelegate:" + stopwatch);
 	}
 	/**
 	 * 
@@ -67,11 +77,13 @@ public class PromoCodeValidationDelegate implements JavaDelegate {
 				applicationFormResponse.getProcessingStatus().setCurrentStage(CurrentStageEnum.ENTERCUSTOMERDETAILS);
 				applicationFormResponse.getProcessingStatus().setNextStage(NextStageEnum.ENTERCUSTOMERDETAILS);
 				execution.setVariable(APPLICATION_FORM_RESPONSE, applicationFormResponse);
+				//Set the Validation Variable as Complete
+				//execution.setVariable("ValidationStatus", "Complete");
 				throw new BpmnError("CC-WF-001","InvalidPromoCode");
 			}else {
 				setProcessingStatus(applicationFormResponse,"PromoCode Validation Succesfull");				
 			}			
-		}else {
+		}else {			
 			setProcessingStatus(applicationFormResponse,"PromoCode Not Provided");			
 		}
 			

@@ -92,7 +92,7 @@ public class CamundaProcessEngineService implements ProcessEngineService {
 		LOGGER.info("Completed Task for submitPersonalDetails- "+taskId);
 		//Get the Latest applicationFormResponse if there are errors.
 		applicationFormResponse=getLatestResponse(taskId,applicationForm.getReference().getApplicationIdentifier(), restTemplate);
-		LOGGER.info("applicationFormResponse latest for submitPersonalDetails- " +applicationFormResponse);
+		LOGGER.info("Fetched latest applicationFormResponse");
 		return applicationFormResponse;
 	}
 
@@ -106,12 +106,11 @@ public class CamundaProcessEngineService implements ProcessEngineService {
 		LOGGER.info("Completed Task for submitPromoCodeAndCustomerIdentity- "+taskId);
 		//Get the Latest applicationFormResponse if there are errors.
 		applicationFormResponse=getLatestResponse(taskId,applicationForm.getReference().getApplicationIdentifier(), restTemplate);
-		LOGGER.info("applicationFormResponse latest for submitPromoCodeAndCustomerIdentity- " +applicationFormResponse);
+		LOGGER.info("Fetched latest applicationFormResponse");
 		return applicationFormResponse;
 	}
 	
 	private ApplicationFormResponse getLatestResponse(String taskId, String processId,RestTemplate restTemplate) throws Exception {
-		//RestTemplate task = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		headers.setContentType(MediaType.APPLICATION_JSON);		
@@ -125,33 +124,18 @@ public class CamundaProcessEngineService implements ProcessEngineService {
 			    .fromUriString(taskURL)
 			    // Add query parameter
 			    .queryParam("processinstanceid", processId);
-			    //.queryParam("taskid", taskId);
-				
-
-
-		/*ResponseEntity<String> result = restTemplate.getForEntity(builder.toUriString(),String.class);
-		LOGGER.info("getLatestResponse response "+result.getBody());
-		JsonObject jsonObject = new JsonParser().parse(result.getBody()).getAsJsonObject();
-	    ApplicationFormResponse applicationFormResponse = new Gson().fromJson(jsonObject, ApplicationFormResponse.class);
-		LOGGER.info("applicationFormResponse after converting to GSON- "+applicationFormResponse);
-		//ApplicationFormResponse applicationFormResponse = result.getBody();
-	    //LOGGER.info("applicationFormResponse:"+ReflectionToStringBuilder.toString(applicationFormResponse));
-		return applicationFormResponse;*/
-		
+						
 		ResponseEntity<String> result=null;
 		try {
 			result = restTemplate.getForEntity(builder.toUriString(),String.class);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//JsonObject jsonObjectResponse = (JsonObject)jsonObject.get("applicationFormResponse").getAsJsonObject();
+		
 	    ApplicationFormResponse applicationFormResponse=null;	
 		if (result!=null) {
-			LOGGER.info("getLatestResponse response" + result.getBody());
 			JsonObject jsonObject = new JsonParser().parse(result.getBody()).getAsJsonObject();
 			applicationFormResponse = new Gson().fromJson(jsonObject, ApplicationFormResponse.class);
-			LOGGER.info("applicationFormResponse after parsing- " + applicationFormResponse);
 		}
 		return applicationFormResponse;
 
@@ -161,16 +145,6 @@ public class CamundaProcessEngineService implements ProcessEngineService {
 	@Override
 	public ApplicationFormResponse submitCreditCardApplicationForApproval(ApplicationForm applicationForm) throws Exception {
 		RestTemplate restTemplate = new RestTemplate();		
-		//String taskId = getTaskId(applicationForm, restTemplate);
-		//LOGGER.info("GetTaskId for submitCreditCardApplicationForApproval- "+taskId);
-	    //Complete the task
-		//ApplicationFormResponse applicationFormResponse=completeTask(taskId,applicationForm, restTemplate);
-		//LOGGER.info("Completed Task for submitCreditCardApplicationForApproval- "+taskId);
-		
-		//ApplicationFormResponse applicationFormResponse=(ApplicationFormResponse)runtimeService.getVariable(processInstanceId, "applicationFormResponse");
-		//Get the Latest applicationFormResponse if there are errors.
-		/*applicationFormResponse=getLatestResponse(taskId,applicationForm.getReference().getApplicationIdentifier(), restTemplate);
-		LOGGER.info("applicationFormResponse latest for submitCreditCardApplicationForApproval- " +applicationFormResponse);*/
 		
 		ApplicationFormResponse applicationFormResponse=getLatestResponse("",applicationForm.getReference().getApplicationIdentifier(), restTemplate);
 		return applicationFormResponse;
@@ -184,9 +158,7 @@ public class CamundaProcessEngineService implements ProcessEngineService {
 	    //Complete the task
 		ApplicationFormResponse applicationFormResponse=completeTask(taskId,applicationForm, restTemplate);
 		LOGGER.info("Completed Task for submitUserOptions- "+taskId);
-		//Get the Latest applicationFormResponse if there are errors.
-	    /*applicationFormResponse=getLatestResponse(taskId,applicationForm.getReference().getApplicationIdentifier(), restTemplate);
-		LOGGER.info("applicationFormResponse latest for submitUserOptions- " +applicationFormResponse);*/
+		
 		return applicationFormResponse;
 	}
 	
@@ -225,14 +197,12 @@ public class CamundaProcessEngineService implements ProcessEngineService {
 		processExecutionRequest.put("withVariablesInReturn", true);
 		
 		HttpEntity<String> entity = new HttpEntity<>(processExecutionRequest.toJSONString(), headers);
-		LOGGER.info("completeTask entity"+ReflectionToStringBuilder.toString(entity));
 
 		ResponseEntity<String> result = restTemplate.postForEntity(uri,entity,String.class);
 		LOGGER.info("completeTask response"+result.getBody());
 		JsonObject jsonObject = new JsonParser().parse(result.getBody()).getAsJsonObject();
 		JsonObject jsonObjectResponse = (JsonObject)jsonObject.get("applicationFormResponse").getAsJsonObject();
 	    ApplicationFormResponse applicationFormResponse = new Gson().fromJson(jsonObjectResponse.get("value").getAsString(), ApplicationFormResponse.class);	
-		LOGGER.info("applicationFormResponse:"+ReflectionToStringBuilder.toString(applicationFormResponse));
 		return applicationFormResponse;
 
 	}
@@ -251,9 +221,7 @@ public class CamundaProcessEngineService implements ProcessEngineService {
 		//http://localhost:9090/cc-api/task?processInstanceId=a90fa3b0-0cc0-11ea-
 		final String taskURL = url+"/"+processApplicationName + "/task?processInstanceId=" + applicationForm.getReference().getApplicationIdentifier();
 		URI uri = new URI(taskURL);
-		LOGGER.info("getTaskId URI- "+uri.toString());
 		ResponseEntity<String> result = restTemplate.getForEntity(uri,String.class);
-		LOGGER.info("getTaskId response"+result.getBody());
 	 
 		JsonArray jsonArray  = new JsonParser().parse(result.getBody()).getAsJsonArray();
 	    String taskId = (String)jsonArray.get(0).getAsJsonObject().get("id").getAsString();

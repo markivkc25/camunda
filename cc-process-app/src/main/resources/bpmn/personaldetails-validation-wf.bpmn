@@ -7,21 +7,11 @@
   </bpmn:collaboration>
   <bpmn:process id="personaldetails-validation-workflow" name="personaldetails-validation-workflow" isExecutable="true" camunda:versionTag="1.0">
     <bpmn:startEvent id="StartEvent_1" camunda:asyncBefore="true">
-      <bpmn:extensionElements>
-        <camunda:executionListener event="start">
-          <camunda:script scriptFormat="javascript"><![CDATA[print('Start task of personal details validation was invoked')]]></camunda:script>
-        </camunda:executionListener>
-      </bpmn:extensionElements>
       <bpmn:outgoing>SequenceFlow_1e5ct45</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0bkzsdm" sourceRef="IntermediateThrowEvent_0kr2rvd" targetRef="EndEvent_0oley5d" />
     <bpmn:sequenceFlow id="SequenceFlow_0zypzme" sourceRef="BoundaryEvent_0e8opfp" targetRef="EndEvent_0oley5d" />
     <bpmn:serviceTask id="Task_18znpjt" name="ValidateAddress" camunda:asyncBefore="true" camunda:delegateExpression="#{addressValidator}">
-      <bpmn:extensionElements>
-        <camunda:executionListener event="start">
-          <camunda:script scriptFormat="javascript"><![CDATA[print('Validate Address was invoked')]]></camunda:script>
-        </camunda:executionListener>
-      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1e5ct45</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_05f5lop</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -30,11 +20,6 @@
       <bpmn:errorEventDefinition errorRef="Error_070kcli" />
     </bpmn:boundaryEvent>
     <bpmn:serviceTask id="Task_0v5ph6d" name="Get Credit Score By SSN" camunda:asyncBefore="true" camunda:delegateExpression="#{ssnValidator}">
-      <bpmn:extensionElements>
-        <camunda:executionListener event="start">
-          <camunda:script scriptFormat="javascript"><![CDATA[print('Get Credit score by SSN was invoked')]]></camunda:script>
-        </camunda:executionListener>
-      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_05f5lop</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0tiiwc9</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -43,6 +28,11 @@
       <bpmn:errorEventDefinition errorRef="Error_02zm1x0" />
     </bpmn:boundaryEvent>
     <bpmn:endEvent id="EndEvent_0oley5d" name="Throw Error to Parent Process" camunda:asyncBefore="true">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy"><![CDATA[execution.setVariable("ValidationStatus", "Complete");]]></camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0zypzme</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0bkzsdm</bpmn:incoming>
       <bpmn:errorEventDefinition errorRef="Error_0ffw433" />
@@ -51,6 +41,11 @@
     <bpmn:sequenceFlow id="SequenceFlow_05f5lop" sourceRef="Task_18znpjt" targetRef="Task_0v5ph6d" />
     <bpmn:sequenceFlow id="SequenceFlow_0tiiwc9" sourceRef="Task_0v5ph6d" targetRef="EndEvent_0qd2wyv" />
     <bpmn:endEvent id="EndEvent_0qd2wyv" camunda:asyncBefore="true">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy"><![CDATA[execution.setVariable("ValidationStatus", "Complete");]]></camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0tiiwc9</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>

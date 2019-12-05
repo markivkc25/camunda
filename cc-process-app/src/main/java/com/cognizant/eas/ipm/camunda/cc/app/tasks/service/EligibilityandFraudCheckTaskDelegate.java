@@ -11,11 +11,6 @@ public class EligibilityandFraudCheckTaskDelegate implements JavaDelegate {
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
 		
-		
-		//Dummy hard coded values
-		
-		execution.setVariable("creditScore", 650);
-		execution.setVariable("isCustomerEligible", true);
 		execution.setVariable("fraudValidation", "Pass");
 
 	}

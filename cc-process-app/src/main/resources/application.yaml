@@ -8,10 +8,10 @@ spring:
      password: ${CAMUNDA_PE_DATASOURCE_PASSWORD}
    jpa:
      database: default
-     properties.hibernate.format_sql: true
+     properties.hibernate.format_sql: false
      hibernate.ddl-auto: update
      generate-ddl: true
-     show-sql: true    
+     show-sql: false    
 spring.main.allow-bean-definition-overriding: true
 
 # spring.datasource:
@@ -25,7 +25,9 @@ spring.application.name: creditcard-app
 
 
 camunda.bpm:
-  history-level: full
+  history-level: none
+  core-pool-size: 10
+  queue-capacity: 10
   default-serialization-format: application/json
   auto-deployment-enabled: true
   admin-user:
@@ -37,11 +39,11 @@ camunda.bpm:
     create: All Tasks
 server.port: ${CC_PROCESS_APP_PORT}
 
+camunda.bpm.management:
+   health.camunda.enabled: true
 # App Configurations
 st.cc:
    timeout.duration: "PT30M"
    address.validation.url: https://www.yaddress.net/api/Address   
    creditscore.validation.url: ${CS_PROCESS_APP_URL}/credit-score
- 
-
-      
+   

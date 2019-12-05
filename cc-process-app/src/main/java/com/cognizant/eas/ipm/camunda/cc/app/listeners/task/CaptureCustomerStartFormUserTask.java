@@ -52,13 +52,17 @@ public class CaptureCustomerStartFormUserTask implements TaskListener {
 			e.printStackTrace();
 		}
 		applicationFormResponse.setApplicationForm(applicationForm);
-		
+		//Default Variables
+		task.setVariable("hasPromoCode", false);
+		task.setVariable("isExistingCustomer", false);
+		task.setVariable("ValidationStatus", "InComplete");
 		if(applicationForm!=null && applicationForm.getReference()!=null && applicationForm.getReference().getPromoCode()!=null) {
 			String promoCode=applicationForm.getReference().getPromoCode();
 			task.setVariable("promoCode", promoCode);	
+			task.setVariable("hasPromoCode", true);
 			LOGGER.info("Credit Card Application Form generated for promoCode"+promoCode);
 		}
-		task.setVariable("isExistingCustomer", false);
+		
 		if(applicationForm!=null && applicationForm.isExistingCustomer()) {
 			boolean isExistingCustomer=applicationForm.isExistingCustomer();
 			task.setVariable("isExistingCustomer", isExistingCustomer);
