@@ -21,7 +21,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<version.java>1.8</version.java>
-		<springfox-version>2.7.0</springfox-version>
+		<springfox-version>2.10.0</springfox-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 		<start-class>com.cognizant.eas.ipm.camunda.creditscore.proxy.Swagger2SpringBoot</start-class>
